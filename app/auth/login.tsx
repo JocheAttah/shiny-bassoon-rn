@@ -33,10 +33,6 @@ const Login = () => {
   const onSubmit = async (data: any) => {
     console.log({ data });
     router.replace('/(tabs)');
-    // setLoading(true);
-    // await signIn(data);
-    // // router.replace("/(tabs)/")
-    // setLoading(false);
   };
 
   const Form = () => (
