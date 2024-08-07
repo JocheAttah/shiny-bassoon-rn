@@ -327,16 +327,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     paddingVertical: 15,
     marginBottom: 24,
-
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-
-    elevation: 7,
   },
   validationBanner: {
     backgroundColor: 'rgba(250,210,56,0.15)',

@@ -7,30 +7,103 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {
   ArrowRightIcon,
+  ChevronDownIcon,
   HeartIcon,
+  MagnifyingGlassIcon,
+  MapPinIcon,
   StarIcon,
 } from 'react-native-heroicons/solid';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import { HeartIcon as HeartOutlineIcon } from 'react-native-heroicons/outline';
+import { StarIcon as StarOutlineIcon } from 'react-native-heroicons/outline';
+import { useState } from 'react';
 
 export default function HomeScreen() {
+  const [text, onChangeText] = useState('');
+
+  const handleSearch = (text) => {
+    onChangeText(text);
+  };
   const Header = () => (
     <View
       style={{
         backgroundColor: colors.primary,
-        paddingTop: 60,
+        paddingTop: 40,
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        height: '20%',
+        height: '25%',
         borderBottomLeftRadius: 25,
         borderBottomRightRadius: 25,
       }}
     >
-      <Text>ghjk</Text>
+      <View
+        style={{ flexDirection: 'row', width: '50%', alignItems: 'center' }}
+      >
+        <MapPinIcon size={16} color={colors.white} />
+        <Text
+          style={{
+            fontSize: 16,
+            color: colors.white,
+            fontWeight: '600',
+            marginRight: 20,
+            marginLeft: 10,
+          }}
+        >
+          14, Abimbola Street,...
+        </Text>
+        <ChevronDownIcon size={18} color={colors.white} />
+      </View>
+      <View>
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity style={styles.option}>
+            <Text style={styles.optionText}>Pickup</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.option]}>
+            <StarIcon size={12} color={colors.white} />
+            <Text style={[styles.optionText]}>Ratings</Text>
+            <ChevronDownIcon size={12} color={colors.white} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.option, { backgroundColor: '#BFD9CA' }]}
+          >
+            <Text style={[styles.optionText, { color: '#0C4010' }]}>
+              Under 30 min
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.option}>
+            <Text style={styles.optionText}>Price</Text>
+            <ChevronDownIcon size={12} color={colors.white} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View
+        style={{
+          marginTop: 20,
+          width: '90%',
+          backgroundColor: colors.white,
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderRadius: 20,
+          paddingHorizontal: 16,
+          paddingVertical: 10,
+        }}
+      >
+        <MagnifyingGlassIcon size={20} color={'#5F5F5F'} />
+        <TextInput
+          style={[styles.textInput, { fontSize: 14 }]}
+          onChangeText={handleSearch}
+          value={text}
+          placeholder='Search'
+        />
+      </View>
     </View>
   );
 
@@ -51,8 +124,14 @@ export default function HomeScreen() {
         }}
       >
         {categoriesData.map((item) => (
-          <View style={{ width: '20%' }}>
-            <Text>{item.text}</Text>
+          <View style={{ width: '20%', alignItems: 'center' }}>
+            <Image
+              source={item.image}
+              style={{
+                height: 26,
+                width: 26,
+              }}
+            />
             <Text style={{ fontSize: 15, fontWeight: '6500' }}>
               {item.text}
             </Text>
@@ -63,7 +142,7 @@ export default function HomeScreen() {
   };
 
   const Ads = () => {
-    type ItemProps = { title: string; color: 'string' };
+    type ItemProps = { title: string; color: string };
 
     const Item = ({ title, color }: ItemProps) => (
       <View
@@ -72,6 +151,7 @@ export default function HomeScreen() {
           paddingHorizontal: 30,
           paddingVertical: 40,
           width: '96%',
+
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 6,
@@ -90,13 +170,21 @@ export default function HomeScreen() {
             <Item title={item.text} color={item.color} />
           )}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={
+            {
+              // flex: 1,
+              // width: '100%',
+            }
+          }
         />
       </View>
     );
   };
 
   const PopularRestaurants = () => {
-    type ItemProps = { title: string; color: 'string' };
+    type ItemProps = { title: string; color: string };
+
+    const [liked, setLiked] = useState(false);
 
     const Item = ({ title, color }: ItemProps) => (
       <View>
@@ -142,9 +230,13 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
-          <View>
-            <HeartIcon size={20} color={'red'} />
-          </View>
+          <TouchableOpacity onPress={() => setLiked(!liked)}>
+            {!liked ? (
+              <HeartOutlineIcon size={20} color='#5F5F5F' />
+            ) : (
+              <HeartIcon size={20} color={'red'} />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -193,7 +285,9 @@ export default function HomeScreen() {
   );
 
   const Restaurants = () => {
-    type ItemProps = { title: string; color: 'string' };
+    type ItemProps = { title: string; color: string };
+
+    const [liked, setLiked] = useState(false);
 
     const Item = ({ title, color }: ItemProps) => (
       <View style={{ marginBottom: 20 }}>
@@ -224,9 +318,13 @@ export default function HomeScreen() {
             <Text style={{ fontWeight: '600', fontSize: 16 }}>
               Chicken Republic
             </Text>
-            <View>
-              <HeartIcon size={20} color={'red'} />
-            </View>
+            <TouchableOpacity onPress={() => setLiked(!liked)}>
+              {!liked ? (
+                <HeartOutlineIcon size={20} color='#5F5F5F' />
+              ) : (
+                <HeartIcon size={20} color={'red'} />
+              )}
+            </TouchableOpacity>
           </View>
           <View
             style={{
@@ -289,6 +387,8 @@ export default function HomeScreen() {
   const PopularOrders = () => {
     type ItemProps = { title: string; color: 'string' };
 
+    const [liked, setLiked] = useState(false);
+
     const Item = ({ title, color }: ItemProps) => (
       <View>
         <View
@@ -333,9 +433,13 @@ export default function HomeScreen() {
               </Text>
             </View>
           </View>
-          <View>
-            <HeartIcon size={20} color={'red'} />
-          </View>
+          <TouchableOpacity onPress={() => setLiked(!liked)}>
+            {!liked ? (
+              <HeartOutlineIcon size={20} color='#5F5F5F' />
+            ) : (
+              <HeartIcon size={20} color={'red'} />
+            )}
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -379,4 +483,28 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  textInput: {
+    marginLeft: 10,
+  },
+  optionsContainer: {
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  option: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  optionText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginRight: 4,
+  },
+});
