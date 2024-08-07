@@ -19,10 +19,8 @@ import {
   MapPinIcon,
   StarIcon,
 } from 'react-native-heroicons/solid';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { HeartIcon as HeartOutlineIcon } from 'react-native-heroicons/outline';
-import { StarIcon as StarOutlineIcon } from 'react-native-heroicons/outline';
 import { useState } from 'react';
 
 export default function HomeScreen() {
