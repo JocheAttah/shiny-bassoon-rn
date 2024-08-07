@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -358,11 +359,16 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <StatusBar
+        animated={true}
+        backgroundColor='#61dafb'
+        barStyle={'light-content'}
+      />
+      <Header />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{}}
+        contentContainerStyle={{ paddingBottom: 50 }}
       >
-        <Header />
         <Categories />
         <Ads />
         <PopularRestaurants />
