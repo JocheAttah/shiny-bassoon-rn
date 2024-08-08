@@ -1,6 +1,7 @@
 import { colors } from '@/constants/Colors';
 import { adsData, categoriesData } from '@/constants/dummyData';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ScrollView,
@@ -21,10 +22,31 @@ import {
 } from 'react-native-heroicons/solid';
 
 import { HeartIcon as HeartOutlineIcon } from 'react-native-heroicons/outline';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getRestaurants } from '@/api/axios';
+import { observer } from 'mobx-react';
+import { useStores } from '@/stores';
 
-export default function HomeScreen() {
+const HomeScreen = observer(() => {
   const [text, onChangeText] = useState('');
+  // const [restaurants, setRestaurants] = useState([]);
+  // const [popularRestaurants, setPopularRestaurants] = useState([]);
+  // const [popularOrders, setPopularOrders] = useState([]);
+  // const [ads, setAds] = useState([]);
+  // const [loading, setLoading] = useState(true);
+
+  const { restaurantStore } = useStores();
+
+  const {
+    ads,
+    adsLoading,
+    restaurants,
+    restaurantsLoading,
+    popRestaurants,
+    popRestaurantsLoading,
+    orders,
+    ordersLoading,
+  } = restaurantStore;
 
   const handleSearch = (text) => {
     onChangeText(text);
@@ -142,11 +164,9 @@ export default function HomeScreen() {
   const Ads = () => {
     type ItemProps = { title: string; color: string };
 
-    const Item = ({ title, color }: ItemProps) => (
+    const Item = ({ title }: ItemProps) => (
       <View
         style={{
-          width: '100%',
-          backgroundColor: color,
           paddingHorizontal: 30,
           paddingVertical: 40,
           justifyContent: 'center',
@@ -163,29 +183,29 @@ export default function HomeScreen() {
         style={{
           marginLeft: 20,
           marginTop: 20,
-          width: '100%',
         }}
       >
-      
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ width: '100%' }}
-        >
-          {adsData.map((item) => (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {ads.map((item) => (
             <View
               style={{
-                width: '60%',
-                backgroundColor: item.color,
-                paddingHorizontal: 30,
-                paddingVertical: 40,
+                width: 220,
+                height: 100,
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderRadius: 6,
                 marginRight: 20,
               }}
             >
-              <Text style={{ color: 'white' }}>{item.text}</Text>
+              <Image
+                source={{ uri: item.image }}
+                style={{
+                  width: '100%',
+                  borderRadius: 6,
+                  height: '100%',
+                  resizeMode: 'cover',
+                }}
+              />
             </View>
           ))}
         </ScrollView>
@@ -198,20 +218,26 @@ export default function HomeScreen() {
 
     const [liked, setLiked] = useState(false);
 
-    const Item = ({ title, color }: ItemProps) => (
+    const Item = ({ image, title }: ItemProps) => (
       <View>
         <View
           style={{
-            backgroundColor: color,
-            paddingHorizontal: 30,
-            paddingVertical: 40,
-            width: '96%',
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 6,
+            width: 220,
+            height: 100,
           }}
         >
-          <Text style={{ color: 'white' }}>{title}</Text>
+          <Image
+            source={{ uri: image }}
+            style={{
+              width: '100%',
+              borderRadius: 6,
+              height: '100%',
+              resizeMode: 'cover',
+            }}
+          />
         </View>
         <View
           style={{
@@ -236,7 +262,9 @@ export default function HomeScreen() {
               }}
             />
             <View>
-              <Text style={{ fontWeight: '600' }}>Grand Fingers</Text>
+              <Text numberOfLines={1} style={{ fontWeight: '600', width: 140 }}>
+                {title}
+              </Text>
               <Text style={{ fontSize: 10 }}>
                 4.9 mi · 38 min · N1,000 delivery fee{' '}
               </Text>
@@ -259,9 +287,9 @@ export default function HomeScreen() {
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            data={adsData}
+            data={popRestaurants}
             renderItem={({ item }) => (
-              <Item title={item.text} color={item.color} />
+              <Item image={item.image} title={item.title} id={item.id} />
             )}
             keyExtractor={(item) => item.id}
           />
@@ -301,13 +329,10 @@ export default function HomeScreen() {
 
     const [liked, setLiked] = useState(false);
 
-    const Item = ({ title, color }: ItemProps) => (
+    const Item = ({ title, image }: ItemProps) => (
       <View style={{ marginBottom: 20 }}>
         <View
           style={{
-            backgroundColor: color,
-            paddingHorizontal: 30,
-            paddingVertical: 40,
             height: 160,
             justifyContent: 'center',
             alignItems: 'center',
@@ -315,7 +340,16 @@ export default function HomeScreen() {
             borderTopRightRadius: 6,
           }}
         >
-          <Text style={{ color: 'white' }}>{title}</Text>
+          <Image
+            source={{ uri: image }}
+            style={{
+              width: '100%',
+              borderTopLeftRadius: 6,
+              borderTopRightRadius: 6,
+              height: '100%',
+              resizeMode: 'cover',
+            }}
+          />
         </View>
         <View style={{ width: '100%' }}>
           <View
@@ -327,8 +361,11 @@ export default function HomeScreen() {
               marginBottom: 4,
             }}
           >
-            <Text style={{ fontWeight: '600', fontSize: 16 }}>
-              Chicken Republic
+            <Text
+              numberOfLines={1}
+              style={{ fontWeight: '600', fontSize: 16, width: '80%' }}
+            >
+              {title}
             </Text>
             <TouchableOpacity onPress={() => setLiked(!liked)}>
               {!liked ? (
@@ -385,9 +422,9 @@ export default function HomeScreen() {
         <View style={{ marginHorizontal: 20, marginTop: 12 }}>
           <FlatList
             showsHorizontalScrollIndicator={false}
-            data={adsData}
+            data={restaurants}
             renderItem={({ item }) => (
-              <Item title={item.text} color={item.color} />
+              <Item title={item.title} image={item.image} />
             )}
             keyExtractor={(item) => item.id}
           />
@@ -397,24 +434,30 @@ export default function HomeScreen() {
   };
 
   const PopularOrders = () => {
-    type ItemProps = { title: string; color: 'string' };
+    type ItemProps = { title: string; image: 'string'; id: 'string' };
 
     const [liked, setLiked] = useState(false);
 
-    const Item = ({ title, color }: ItemProps) => (
+    const Item = ({ title, image }: ItemProps) => (
       <View>
         <View
           style={{
-            backgroundColor: color,
-            paddingHorizontal: 30,
-            paddingVertical: 40,
-            width: '96%',
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 6,
+            width: 220,
+            height: 100,
           }}
         >
-          <Text style={{ color: 'white' }}>{title}</Text>
+          <Image
+            source={{ uri: image }}
+            style={{
+              width: '100%',
+              borderRadius: 6,
+              height: '100%',
+              resizeMode: 'cover',
+            }}
+          />
         </View>
         <View
           style={{
@@ -439,7 +482,9 @@ export default function HomeScreen() {
               }}
             />
             <View>
-              <Text style={{ fontWeight: '600' }}>Grand Fingers</Text>
+              <Text numberOfLines={1} style={{ fontWeight: '600', width: 140 }}>
+                {title}
+              </Text>
               <Text style={{ fontSize: 10 }}>
                 4.9 mi · 38 min · N1,000 delivery fee{' '}
               </Text>
@@ -462,9 +507,9 @@ export default function HomeScreen() {
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
-            data={adsData}
+            data={orders}
             renderItem={({ item }) => (
-              <Item title={item.text} color={item.color} />
+              <Item title={item.title} image={item.image} />
             )}
             keyExtractor={(item) => item.id}
           />
@@ -472,6 +517,47 @@ export default function HomeScreen() {
       </View>
     );
   };
+
+  // useEffect(() => {
+  //   const fetchRestaurants = async () => {
+  //     try {
+  //       const data = await getRestaurants({ location: 'New York' });
+  //       setRestaurants(data.slice(10, 15));
+  //       setPopularRestaurants(data.slice(1, 11));
+  //       setPopularOrders(data.slice(16, 20));
+  //       setAds(data.slice(20, 23));
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error('Error fetching restaurants:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchRestaurants();
+  // }, []);
+
+  useEffect(() => {
+    restaurantStore.getAds();
+    restaurantStore.getRestaurants();
+    restaurantStore.getPopRestaurants();
+    restaurantStore.getPopOrders();
+  }, []);
+
+  if (
+    adsLoading ||
+    restaurantsLoading ||
+    popRestaurantsLoading ||
+    ordersLoading
+  ) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>
+          <ActivityIndicator size={'large'} color={colors.primary} />
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff', width: '100%' }}>
@@ -489,7 +575,9 @@ export default function HomeScreen() {
       </ScrollView>
     </View>
   );
-}
+});
+
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   textInput: {
