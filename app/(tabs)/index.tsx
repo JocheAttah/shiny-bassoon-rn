@@ -145,11 +145,10 @@ export default function HomeScreen() {
     const Item = ({ title, color }: ItemProps) => (
       <View
         style={{
+          width: '100%',
           backgroundColor: color,
           paddingHorizontal: 30,
           paddingVertical: 40,
-          width: '96%',
-
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 6,
@@ -160,21 +159,36 @@ export default function HomeScreen() {
     );
 
     return (
-      <View style={{ marginLeft: 20, marginTop: 20 }}>
-        <FlatList
+      <View
+        style={{
+          marginLeft: 20,
+          marginTop: 20,
+          width: '100%',
+        }}
+      >
+      
+        <ScrollView
           horizontal
-          data={adsData}
-          renderItem={({ item }) => (
-            <Item title={item.text} color={item.color} />
-          )}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={
-            {
-              // flex: 1,
-              // width: '100%',
-            }
-          }
-        />
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ width: '100%' }}
+        >
+          {adsData.map((item) => (
+            <View
+              style={{
+                width: '60%',
+                backgroundColor: item.color,
+                paddingHorizontal: 30,
+                paddingVertical: 40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 6,
+                marginRight: 20,
+              }}
+            >
+              <Text style={{ color: 'white' }}>{item.text}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
     );
   };
@@ -460,16 +474,12 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      <StatusBar
-        animated={true}
-        backgroundColor='#61dafb'
-        barStyle={'light-content'}
-      />
+    <View style={{ flex: 1, backgroundColor: '#fff', width: '100%' }}>
+      <StatusBar animated={true} barStyle={'light-content'} />
       <Header />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 50 }}
+        contentContainerStyle={{ paddingBottom: 50, width: '100%' }}
       >
         <Categories />
         <Ads />
