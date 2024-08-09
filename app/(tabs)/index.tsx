@@ -1,5 +1,5 @@
 import { colors } from '@/constants/Colors';
-import { adsData, categoriesData } from '@/constants/dummyData';
+import { categoriesData } from '@/constants/dummyData';
 import {
   ActivityIndicator,
   FlatList,
@@ -20,23 +20,14 @@ import {
   MapPinIcon,
   StarIcon,
 } from 'react-native-heroicons/solid';
-
 import { HeartIcon as HeartOutlineIcon } from 'react-native-heroicons/outline';
 import { useEffect, useState } from 'react';
-import { getRestaurants } from '@/api/axios';
 import { observer } from 'mobx-react';
 import { useStores } from '@/stores';
 
 const HomeScreen = observer(() => {
   const [text, onChangeText] = useState('');
-  // const [restaurants, setRestaurants] = useState([]);
-  // const [popularRestaurants, setPopularRestaurants] = useState([]);
-  // const [popularOrders, setPopularOrders] = useState([]);
-  // const [ads, setAds] = useState([]);
-  // const [loading, setLoading] = useState(true);
-
   const { restaurantStore } = useStores();
-
   const {
     ads,
     adsLoading,
@@ -52,33 +43,10 @@ const HomeScreen = observer(() => {
     onChangeText(text);
   };
   const Header = () => (
-    <View
-      style={{
-        backgroundColor: colors.primary,
-        paddingTop: 40,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: '25%',
-        borderBottomLeftRadius: 25,
-        borderBottomRightRadius: 25,
-      }}
-    >
-      <View
-        style={{ flexDirection: 'row', width: '50%', alignItems: 'center' }}
-      >
+    <View style={styles.headerContainer}>
+      <View style={styles.headerTextContainer}>
         <MapPinIcon size={16} color={colors.white} />
-        <Text
-          style={{
-            fontSize: 16,
-            color: colors.white,
-            fontWeight: '600',
-            marginRight: 20,
-            marginLeft: 10,
-          }}
-        >
-          14, Abimbola Street,...
-        </Text>
+        <Text style={styles.headerText}>14, Abimbola Street,...</Text>
         <ChevronDownIcon size={18} color={colors.white} />
       </View>
       <View>
@@ -104,18 +72,7 @@ const HomeScreen = observer(() => {
           </TouchableOpacity>
         </View>
       </View>
-      <View
-        style={{
-          marginTop: 20,
-          width: '90%',
-          backgroundColor: colors.white,
-          flexDirection: 'row',
-          alignItems: 'center',
-          borderRadius: 20,
-          paddingHorizontal: 16,
-          paddingVertical: 10,
-        }}
-      >
+      <View style={styles.searchContainer}>
         <MagnifyingGlassIcon size={20} color={'#5F5F5F'} />
         <TextInput
           style={[styles.textInput, { fontSize: 14 }]}
@@ -129,33 +86,15 @@ const HomeScreen = observer(() => {
 
   const Categories = () => {
     return (
-      <View
-        style={{
-          width: '85%',
-
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: 10,
-          rowGap: 30,
-          alignSelf: 'center',
-          marginTop: 40,
-        }}
-      >
+      <View style={styles.categoriesContainer}>
         {categoriesData.map((item) => (
-          <View style={{ width: '20%', alignItems: 'center' }}>
-            <Image
-              source={item.image}
-              style={{
-                height: 26,
-                width: 26,
-              }}
-            />
-            <Text style={{ fontSize: 15, fontWeight: '6500' }}>
-              {item.text}
-            </Text>
-          </View>
+          <TouchableOpacity
+            style={styles.categoryContainer}
+            onPress={() => console.warn(`${item.text} clicked`)}
+          >
+            <Image source={item.image} style={styles.categoryImage} />
+            <Text style={styles.categoryText}>{item.text}</Text>
+          </TouchableOpacity>
         ))}
       </View>
     );
@@ -164,48 +103,12 @@ const HomeScreen = observer(() => {
   const Ads = () => {
     type ItemProps = { title: string; color: string };
 
-    const Item = ({ title }: ItemProps) => (
-      <View
-        style={{
-          paddingHorizontal: 30,
-          paddingVertical: 40,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: 6,
-        }}
-      >
-        <Text style={{ color: 'white' }}>{title}</Text>
-      </View>
-    );
-
     return (
-      <View
-        style={{
-          marginLeft: 20,
-          marginTop: 20,
-        }}
-      >
+      <View style={styles.adsContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {ads.map((item) => (
-            <View
-              style={{
-                width: 220,
-                height: 100,
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 6,
-                marginRight: 20,
-              }}
-            >
-              <Image
-                source={{ uri: item.image }}
-                style={{
-                  width: '100%',
-                  borderRadius: 6,
-                  height: '100%',
-                  resizeMode: 'cover',
-                }}
-              />
+            <View style={styles.adContainer}>
+              <Image source={{ uri: item.image }} style={styles.adImage} />
             </View>
           ))}
         </ScrollView>
@@ -220,46 +123,14 @@ const HomeScreen = observer(() => {
 
     const Item = ({ image, title }: ItemProps) => (
       <View>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 6,
-            width: 220,
-            height: 100,
-          }}
-        >
-          <Image
-            source={{ uri: image }}
-            style={{
-              width: '100%',
-              borderRadius: 6,
-              height: '100%',
-              resizeMode: 'cover',
-            }}
-          />
+        <View style={styles.itemContainer}>
+          <Image source={{ uri: image }} style={styles.itemImage} />
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginRight: 20,
-          }}
-        >
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-            }}
-          >
+        <View style={styles.itemView}>
+          <View style={styles.itemImageContainer}>
             <Image
               source={require('../../assets/images/logo.png')}
-              style={{
-                height: 24,
-                width: 24,
-              }}
+              style={styles.itemImageSec}
             />
             <View>
               <Text numberOfLines={1} style={{ fontWeight: '600', width: 140 }}>
@@ -280,10 +151,11 @@ const HomeScreen = observer(() => {
         </View>
       </View>
     );
+
     return (
-      <View style={{ width: '100%', marginTop: 20 }}>
+      <View style={styles.sectionContainer}>
         <TitleGen title={'Popular Restaurants'} />
-        <View style={{ marginLeft: 20, marginTop: 12 }}>
+        <View style={styles.innerSectionContainer}>
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -330,37 +202,12 @@ const HomeScreen = observer(() => {
     const [liked, setLiked] = useState(false);
 
     const Item = ({ title, image }: ItemProps) => (
-      <View style={{ marginBottom: 20 }}>
-        <View
-          style={{
-            height: 160,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderTopLeftRadius: 6,
-            borderTopRightRadius: 6,
-          }}
-        >
-          <Image
-            source={{ uri: image }}
-            style={{
-              width: '100%',
-              borderTopLeftRadius: 6,
-              borderTopRightRadius: 6,
-              height: '100%',
-              resizeMode: 'cover',
-            }}
-          />
+      <View style={styles.margin20utility}>
+        <View style={styles.resImageContainer}>
+          <Image source={{ uri: image }} style={styles.resImage} />
         </View>
         <View style={{ width: '100%' }}>
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 4,
-            }}
-          >
+          <View style={styles.textContainer}>
             <Text
               numberOfLines={1}
               style={{ fontWeight: '600', fontSize: 16, width: '80%' }}
@@ -417,9 +264,9 @@ const HomeScreen = observer(() => {
       </View>
     );
     return (
-      <View style={{ width: '100%', marginTop: 20 }}>
+      <View style={styles.sectionContainer}>
         <TitleGen title={'Restaurants'} />
-        <View style={{ marginHorizontal: 20, marginTop: 12 }}>
+        <View style={styles.restaurantContainer}>
           <FlatList
             showsHorizontalScrollIndicator={false}
             data={restaurants}
@@ -440,46 +287,14 @@ const HomeScreen = observer(() => {
 
     const Item = ({ title, image }: ItemProps) => (
       <View>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 6,
-            width: 220,
-            height: 100,
-          }}
-        >
-          <Image
-            source={{ uri: image }}
-            style={{
-              width: '100%',
-              borderRadius: 6,
-              height: '100%',
-              resizeMode: 'cover',
-            }}
-          />
+        <View style={styles.itemContainer}>
+          <Image source={{ uri: image }} style={styles.itemImage} />
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginRight: 20,
-          }}
-        >
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-            }}
-          >
+        <View style={styles.itemView}>
+          <View style={styles.itemImageContainer}>
             <Image
               source={require('../../assets/images/logo.png')}
-              style={{
-                height: 24,
-                width: 24,
-              }}
+              style={styles.itemImageSec}
             />
             <View>
               <Text numberOfLines={1} style={{ fontWeight: '600', width: 140 }}>
@@ -501,9 +316,9 @@ const HomeScreen = observer(() => {
       </View>
     );
     return (
-      <View style={{ width: '100%', marginTop: 20 }}>
+      <View style={styles.sectionContainer}>
         <TitleGen title={'Popular Orders'} />
-        <View style={{ marginLeft: 20, marginTop: 12 }}>
+        <View style={styles.innerSectionContainer}>
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -517,25 +332,6 @@ const HomeScreen = observer(() => {
       </View>
     );
   };
-
-  // useEffect(() => {
-  //   const fetchRestaurants = async () => {
-  //     try {
-  //       const data = await getRestaurants({ location: 'New York' });
-  //       setRestaurants(data.slice(10, 15));
-  //       setPopularRestaurants(data.slice(1, 11));
-  //       setPopularOrders(data.slice(16, 20));
-  //       setAds(data.slice(20, 23));
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.error('Error fetching restaurants:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchRestaurants();
-  // }, []);
 
   useEffect(() => {
     restaurantStore.getAds();
@@ -560,7 +356,7 @@ const HomeScreen = observer(() => {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff', width: '100%' }}>
+    <View style={styles.container}>
       <StatusBar animated={true} barStyle={'light-content'} />
       <Header />
       <ScrollView
@@ -580,6 +376,7 @@ const HomeScreen = observer(() => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#fff', width: '100%' },
   textInput: {
     marginLeft: 10,
   },
@@ -602,5 +399,125 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginRight: 4,
+  },
+  headerContainer: {
+    backgroundColor: colors.primary,
+    paddingTop: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '25%',
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+  },
+  headerTextContainer: {
+    flexDirection: 'row',
+    width: '50%',
+    alignItems: 'center',
+  },
+  headerText: {
+    fontSize: 16,
+    color: colors.white,
+    fontWeight: '600',
+    marginRight: 20,
+    marginLeft: 10,
+  },
+  searchContainer: {
+    marginTop: 20,
+    width: '90%',
+    backgroundColor: colors.white,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  categoriesContainer: {
+    width: '85%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 10,
+    rowGap: 30,
+    alignSelf: 'center',
+    marginTop: 40,
+  },
+  categoryContainer: { width: '22%', alignItems: 'center' },
+  categoryImage: {
+    height: 26,
+    width: 26,
+  },
+  categoryText: { fontSize: 15, fontWeight: '600' },
+  adsContainer: {
+    marginLeft: 20,
+    marginTop: 20,
+  },
+  adContainer: {
+    width: 220,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    marginRight: 20,
+  },
+  adImage: {
+    width: '100%',
+    borderRadius: 6,
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  sectionContainer: { width: '100%', marginTop: 20 },
+  restaurantContainer: { marginHorizontal: 20, marginTop: 12 },
+  innerSectionContainer: { marginLeft: 20, marginTop: 12 },
+  itemContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    width: 220,
+    height: 100,
+  },
+  itemImage: {
+    width: '100%',
+    borderRadius: 6,
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  itemView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginRight: 20,
+  },
+  itemImageContainer: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  itemImageSec: {
+    height: 24,
+    width: 24,
+  },
+  resImageContainer: {
+    height: 160,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+  },
+  margin20utility: { marginBottom: 20 },
+  resImage: {
+    width: '100%',
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  textContainer: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
   },
 });
