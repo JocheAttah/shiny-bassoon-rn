@@ -1,2 +1,3 @@
-export const API_KEY = '6db62e5ea7msh20d32ad92db9976p1c4613jsnc0594bfcff3e';
+export const API_KEY = '50ad5289d0mshb04c31054973e92p14d6e6jsn844299e09d5a';
 export const BASE_API_URL = 'https://chinese-food-db.p.rapidapi.com';
+// 50ad5289d0mshb04c31054973e92p14d6e6jsn844299e09d5a
